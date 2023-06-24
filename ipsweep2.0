@@ -1,0 +1,16 @@
+#!/bin/bash
+
+if [ "$1" == "" ]; then
+    echo "You forgot to provide an IP address!"
+    echo "Please make sure to provide an IP address to begin the IP sweep."
+    echo "Syntax that should be used: ./ipsweep.sh <IP ADDRESS>"
+else
+    timestamp=$(date +"%Y%m%d%H%M%S")
+    output_file="IPSweep_$timestamp.txt"
+
+    for ip in $(seq 1 254); do
+        ping -c 1 $1.$ip | grep "64 bytes" | cut -d " " -f 4 | tr -d ":" >> "$output_file" &
+    done
+
+    echo "IP sweep completed. Valid IP addresses stored in $output_file."
+fi
