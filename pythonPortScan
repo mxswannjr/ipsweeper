@@ -1,0 +1,41 @@
+#!/bin/python3
+
+import sys
+import socket
+from datetime import datetime as dt
+
+#Define The Target
+
+if len(sys.argv) == 2:
+	target = socket.gethostbyname(sys.argv[1]) #Translate HostName to IPv4 - very susceptible to user error.
+else:
+	print('Invalid amount of arguments!!!')
+	print('Syntax: python3 scanner.py <ip>')
+
+#Status Banner - provides time and specified target
+print("-" * 50)
+print("Scanning for target: " + target )
+print("Scan Start Time: " + str(dt.now()))
+print("-" * 50)
+
+#For loop attempting to connect to open ports between port 50 and 85 - DNS & HTTP. Timeout set to prevent less hangup time.
+try:
+	for port in range(50,85):
+		s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #Gathering of the IPv4 address and the port.
+		socket.setdefaulttimeout(1)
+		result = s.connect_ex((target,port)) #Error indicator
+		if result == 0:
+			print(f"Port {port} is currently open")
+		s.close()
+		
+except KeyboardInterrupt:
+	print("Exiting program.")
+	sys.exit()
+
+except socket.gaierror:
+	print("HostName could not be resolved - Sorry!")
+	sys.exit()
+	
+except socket.error:
+	print("Something went wrong - cannot connect to server")
+	sys.exit()	
